@@ -113,7 +113,7 @@
 			//////////////////////
 			// DUMB WAYS TO DIE
 			//
-			if(_anchorPoint.x >= size || _anchorPoint.y >= size || _snakeBlocks[_anchorPoint.x][_anchorPoint.y].enabled){
+			if(_anchorPoint.x < 0 || _anchorPoint.y < 0 || _anchorPoint.x >= size || _anchorPoint.y >= size || _snakeBlocks[_anchorPoint.x][_anchorPoint.y].enabled){
 				this.kill();
 				return;
 			}
