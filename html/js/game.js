@@ -11,16 +11,18 @@
 		isGameOver = false;
 
 	var prop = function(index,x,y){
-		var _scores = [100, -200],
-			_colors = ["#00FF00", "#FF0000"],
-			_calories = [1, -2],
-			_framesLives = [200, 400];
+		var _scores = [50, -200, 300, 0],
+			_colors = ["#e0ba00", "#FF0000", "#00FF00", "#000"],
+			_calories = [1, -2, 2, 0],
+			_framesLives = [120, 10, 60, 200];
+			_isKillings = [false, false,false,true];
 
 		this.point = {x : x, y: y};
 		this.score = _scores[index];
 		this.color = _colors[index];
 		this.calories = _calories[index];
 		this.framesLives = _framesLives[index];
+		this.isKilling = _isKillings[index];
 	};
 
 
@@ -100,7 +102,7 @@
 						newPropY = Math.floor(Math.random()*size);
 					}while(snake.blocks[newPropX][newPropY].enabled);
 
-					var newPropType = Math.random() > 0.7 ? 1 : 0;
+					var newPropType = Math.random() > 0.7 ? (Math.random() >= 0.7 ? 3 : 1) : (Math.random() >= 0.5 ? 2 : 0);
 
 					var newProp = new prop(newPropType, newPropX, newPropY);
 					props.push(newProp);
@@ -287,11 +289,16 @@
 				{
 					addBlocks(prop.calories);
 					scores += prop.score;
+					if(prop.isKilling){
+						addBlocks(-_snakeLength);
+					}
 					return false;
 				}
-
 				return true;
 			});
+
+			if(!_isAlive)
+				return;
 
 			_snakeBlocks[_anchorPoint.x][_anchorPoint.y].create(_direction);
 
