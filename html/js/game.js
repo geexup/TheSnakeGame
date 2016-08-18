@@ -81,7 +81,7 @@
 					var newPropX = Math.floor(Math.random()*size);
 					var newPropY = Math.floor(Math.random()*size);
 
-					var newPropType = Math.floor(Math.random()*(2));
+					var newPropType = Math.random() > 0.7 ? 1 : 0;
 
 					var newProp = new prop(newPropType, newPropX, newPropY);
 					props.push(newProp);
