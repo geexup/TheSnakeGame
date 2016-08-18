@@ -5,32 +5,97 @@
 		size = 40,
 		pixelsize = 10;
 
-	var snakeBlock = function(enabled, direction){
-		this.enabled = enabled;
-		this.direction = direction;
-		this.delete = function(){
-			this.enabled = false;
+	
+
+
+	var game = new (function(){
+		var _ctx = ctx,
+			_stop = false,
+			_frameCount = 0,
+			_fps = 10, 
+			_fpsInterval, 
+			_startTime, 
+			_now, 
+			_then, 
+			_elapsed;
+
+		this.__init__ = __init__;
+		this.run = run;
+		this.loop = loop;
+		this.updateAndDrow = updateAndDrow;
+
+		function __init__(){
+			canvas.width = size*pixelsize;
+			canvas.height = size*pixelsize;
 		};
-		this.create = function(direction){
-			this.enabled = true;
-			this.direction = direction;
+
+		function run(){
+			_fpsInterval = 1000 / _fps;
+    		_then = Date.now();
+    		_startTime = _then;
+
+			window.game.loop();
 		};
-		this.toString = function(){
-			return this.enabled ? "1" : "0";
+
+		function loop(){
+			requestAnimationFrame(loop);
+			_now = Date.now();
+    		_elapsed = _now - _then;
+
+    		if (_elapsed > _fpsInterval) {
+    			_then = _now - (_elapsed % _fpsInterval);
+
+				updateAndDrow();
+			}
 		};
-	};
+		function updateAndDrow()
+		{
+			_ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			snake.update();
+			snake.drow(_ctx);
+		}
+
+		this.__init__();
+	})();
+
 
 	var snake = new (function(){
-		var _snakeBlocks = [];
-		var _direction = "up";
-		var _directionToSet = null;
-		var _anchorPoint = {x: 0, y: 0};
-		var _backAnchorPoint = {x: 0, y: 0};
-		var _snakeLength = 1;
-		var _needsToAddBlockCount = 0;
-		var _isAlive = true;
+		var _snakeBlocks = [],
+			_direction = "up",
+			_directionToSet = null,
+			_anchorPoint = {x: 0, y: 0},
+			_backAnchorPoint = {x: 0, y: 0},
+			_snakeLength = 1,
+			_needsToAddBlockCount = 0;
+			_isAlive = true;
 
-		this.__init__ = function (){
+
+		this.__init__ = __init__;
+		this.setDirection = setDirection;
+		this.addBlocks = addBlocks;
+		this.kill = kill;
+		this.update = update;
+		this.drow = drow;
+
+
+		var snakeBlock = function(enabled, direction){
+			this.enabled = enabled;
+			this.direction = direction;
+
+			this.delete = function(){
+				this.enabled = false;
+			};
+			this.create = function(direction){
+				this.enabled = true;
+				this.direction = direction;
+			};
+			this.toString = function(){
+				return this.enabled ? "1" : "0";
+			};
+		};
+
+		function __init__(){
 			for (var x = 0; x < size; x++) {
 				_snakeBlocks[x] = [];
 				for (var y = 0; y < size; y++) {
@@ -44,18 +109,13 @@
 			//create head
 			_anchorPoint.x = rndX;
 			_anchorPoint.y = rndY;
-			_snakeBlocks[_anchorPoint.x][_anchorPoint.y].create(_direction); //[1, _direction];
-			
+			_snakeBlocks[_anchorPoint.x][_anchorPoint.y].create(_direction); 
 
 			_backAnchorPoint.x = _anchorPoint.x;
 			_backAnchorPoint.y = _anchorPoint.y;
-			// _backAnchorPoint.x = rndX;
-			// _backAnchorPoint.y = rndY+1;
-			// _snakeBlocks[_backAnchorPoint.x ][_backAnchorPoint.y].create(_direction);
-
 		};
 
-		this.setDirection = function(val){
+		function setDirection(val){
 			
 			if(_direction == "right" && val == "left")
 				return;
@@ -66,20 +126,20 @@
 			if(_direction == "down" && val == "up")
 				return;
 
-				_directionToSet = val;
+			_directionToSet = val;
 			
 		};
 
-		this.addBlocks = function(count){
+		function addBlocks(count){
 			_needsToAddBlockCount += count;
 		};
 
-		this.kill = function (){
+		 function kill(){
 			_isAlive = false;
 			alert("You're failed!");
 		};
 
-		this.update = function(){
+		function update(){
 
 			if(!_isAlive)
 				return;
@@ -94,19 +154,15 @@
 
 
 			if(_direction === "up"){
-				//_snakeBlocks[_anchorPoint.x][_anchorPoint.y-1].create(_direction);
 				_anchorPoint.y--;
 			}
 			if(_direction === "down"){
-				//_snakeBlocks[_anchorPoint.x][_anchorPoint.y+1].create(_direction);
 				_anchorPoint.y++;
 			}
 			if(_direction === "right"){
-				//_snakeBlocks[_anchorPoint.x+1][_anchorPoint.y].create(_direction);
 				_anchorPoint.x++;
 			}
 			if(_direction === "left"){
-				//_snakeBlocks[_anchorPoint.x-1][_anchorPoint.y].create(_direction);
 				_anchorPoint.x--;
 			}
 
@@ -126,22 +182,21 @@
 			if(_needsToAddBlockCount == 0){
 				var backAnchorPoint_old = _snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y];
 
+				_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
+
 				if(backAnchorPoint_old.direction === "up"){
-					_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
 					_backAnchorPoint.y--;
 				}
 				if(backAnchorPoint_old.direction === "down"){
-					_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
 					_backAnchorPoint.y++;
 				}
 				if(backAnchorPoint_old.direction === "right"){
-					_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
 					_backAnchorPoint.x++;
 				}
 				if(backAnchorPoint_old.direction === "left"){
-					_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
 					_backAnchorPoint.x--;
 				}
+
 			}else{
 				_needsToAddBlockCount--;
 				_snakeLength++;
@@ -149,7 +204,7 @@
 
 		};
 
-		this.drow = function(ctx){
+		 function drow(ctx){
 
 			ctx.fillStyle = _isAlive ? "#0000FF" : "#FF0000";
 
@@ -167,44 +222,14 @@
 
 		this.__init__();
 
-		this.blocks = _snakeBlocks;
 	})();
 
-	console.log(snake);
 
-	var game = new (function(){
-
-		var _ctx = ctx;
-
-		this.__init__ = function (){
-			canvas.width = size*pixelsize;
-			canvas.height = size*pixelsize;
-		};
-
-		this.run = function (){
-			window.requestAnimationFrame(function(){
-				window.game.loop();
-			});
-		};
-
-		this.loop = function(){
-			_ctx.clearRect(0, 0, canvas.width, canvas.height);
-			snake.update();
-			snake.drow(_ctx);
-			window.requestAnimationFrame(function(){
-				setTimeout(function(){window.game.loop();},100);
-				//window.game.loop();
-			});
-		};
-
-	this.__init__();
-
-	})();
 
 	window.game = game;
 	game.run();
 
-	window.addEventListener("keyup", function(e){
+	window.addEventListener("keydown", function(e){
 		//console.log(e.keyCode);
 		switch(e.keyCode){
 			case 37:
