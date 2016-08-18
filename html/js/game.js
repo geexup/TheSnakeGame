@@ -3,21 +3,30 @@
 	var canvas = document.getElementById("THE_SNAKE"),
 		ctx = canvas.getContext("2d");
 		size = 40,
-		pixelsize = 10;
+		pixelsize = 10,
+		props = [],
+		scores = 0;
 
-	
+	var prop = function(index,x,y){
+		var _scores = [100],
+			_colors = ["#00FF00"],
+			_calories = [1],
+			_framesLives = [100];
+
+		this.point = {x : x, y: y};
+		this.score = _scores[index];
+		this.color = _colors[index];
+		this.calories = _calories[index];
+		this.framesLives = _framesLives[index];
+	};
 
 
 	var game = new (function(){
 		var _ctx = ctx,
 			_stop = false,
 			_frameCount = 0,
-			_fps = 10, 
-			_fpsInterval, 
-			_startTime, 
-			_now, 
-			_then, 
-			_elapsed;
+			_fps = 10, _fpsInterval, _startTime, _now, _then, _elapsed,
+			_FramesPerProp = 10, _FramesFromLastProp = 0, _maxPropsCount = 3;
 
 		this.__init__ = __init__;
 		this.run = run;
@@ -52,8 +61,43 @@
 		{
 			_ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+			/////////////////
+			//Props generation
+			////////////////
+			if(_FramesFromLastProp >= _FramesPerProp && props.length < _maxPropsCount){
+
+				var newPropX = Math.floor(Math.random()*size);
+				var newPropY = Math.floor(Math.random()*size);
+
+				var newProp = new prop(0, newPropX, newPropY);
+				props.push(newProp);
+
+				_FramesFromLastProp = 0;
+			}else{
+				_FramesFromLastProp++;
+			}
+
+			props = props.filter(function(prop, index){
+				props[index].framesLives--;
+				return props[index].framesLives > 0;
+			});
+			props.forEach(function(prop){
+				_ctx.fillStyle = prop.color;
+				_ctx.fillRect(prop.point.x*pixelsize,prop.point.y*pixelsize,pixelsize,pixelsize);
+			});
+
+			/////////////////
+			//Snake updates
+			////////////////
 			snake.update();
 			snake.drow(_ctx);
+
+			/////////////////
+			//Score text update
+			////////////////
+			_ctx.fillStyle
+			_ctx.font = "48px serif";
+			_ctx.fillText(scores, size*pixelsize-50, 50);
 		}
 
 		this.__init__();
@@ -175,6 +219,17 @@
 			}
 			/////////////////////
 
+			props = props.filter(function(prop){
+				if(prop.point.x == _anchorPoint.x && prop.point.y == _anchorPoint.y)
+				{
+					addBlocks(prop.calories);
+					scores += prop.score;
+					return false;
+				}
+
+				return true;
+			});
+
 			_snakeBlocks[_anchorPoint.x][_anchorPoint.y].create(_direction);
 
 
@@ -221,6 +276,7 @@
 		};
 
 		this.__init__();
+		this.blocks = _snakeBlocks;
 
 	})();
 
