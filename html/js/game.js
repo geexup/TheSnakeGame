@@ -78,8 +78,12 @@
 			if(isGameRun){
 				if(_FramesFromLastProp >= _FramesPerProp && props.length < _maxPropsCount){
 
-					var newPropX = Math.floor(Math.random()*size);
-					var newPropY = Math.floor(Math.random()*size);
+					var newPropX = Math.floor(Math.random()*size),
+						newPropY = Math.floor(Math.random()*size);
+					do{
+						newPropY = Math.floor(Math.random()*size);
+						newPropY = Math.floor(Math.random()*size);
+					}while(snake.blocks[newPropX][newPropY].enabled);
 
 					var newPropType = Math.random() > 0.7 ? 1 : 0;
 
@@ -114,6 +118,25 @@
 			_ctx.fillStyle
 			_ctx.font = "48px serif";
 			_ctx.fillText(scores, size*pixelsize-100, 50);
+
+			/////////////////
+			//Drow grid
+			////////////////
+			ctx.strokeStyle="#f1f1f1";
+			
+			for (var i = 1; i < size; i++) {
+				ctx.beginPath();
+				ctx.moveTo(i*pixelsize,0);
+				ctx.lineTo(i*pixelsize,size*pixelsize);
+				ctx.stroke();
+			}
+			for (var i = 1; i < size; i++) {
+				ctx.beginPath();
+				ctx.moveTo(0, i*pixelsize);
+				ctx.lineTo(size*pixelsize, i*pixelsize);
+				ctx.stroke();
+			}
+
 		}
 
 		this.__init__();
