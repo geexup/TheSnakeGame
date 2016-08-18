@@ -2,16 +2,17 @@
 
 	var canvas = document.getElementById("THE_SNAKE"),
 		ctx = canvas.getContext("2d");
-		size = 40,
-		pixelsize = 10,
+		size = 50,
+		pixelsize = 15,
 		props = [],
-		scores = 0;
+		scores = 0,
+		isGameRun = false;
 
 	var prop = function(index,x,y){
-		var _scores = [100],
-			_colors = ["#00FF00"],
-			_calories = [1],
-			_framesLives = [100];
+		var _scores = [100, -200],
+			_colors = ["#00FF00", "#FF0000"],
+			_calories = [1, -2],
+			_framesLives = [200, 400];
 
 		this.point = {x : x, y: y};
 		this.score = _scores[index];
@@ -25,13 +26,14 @@
 		var _ctx = ctx,
 			_stop = false,
 			_frameCount = 0,
-			_fps = 10, _fpsInterval, _startTime, _now, _then, _elapsed,
+			_fps = 15, _fpsInterval, _startTime, _now, _then, _elapsed,
 			_FramesPerProp = 10, _FramesFromLastProp = 0, _maxPropsCount = 3;
 
 		this.__init__ = __init__;
 		this.run = run;
 		this.loop = loop;
 		this.updateAndDrow = updateAndDrow;
+		this.restartGame = restartGame;
 
 		function __init__(){
 			canvas.width = size*pixelsize;
@@ -43,7 +45,15 @@
     		_then = Date.now();
     		_startTime = _then;
 
+    		isGameRun = true;
 			window.game.loop();
+		};
+
+		function restartGame(){
+			snake.__init__();
+			scores = 0;
+			props = [];
+			isGameRun = true;
 		};
 
 		function loop(){
@@ -64,28 +74,34 @@
 			/////////////////
 			//Props generation
 			////////////////
-			if(_FramesFromLastProp >= _FramesPerProp && props.length < _maxPropsCount){
+			
+			if(isGameRun){
+				if(_FramesFromLastProp >= _FramesPerProp && props.length < _maxPropsCount){
 
-				var newPropX = Math.floor(Math.random()*size);
-				var newPropY = Math.floor(Math.random()*size);
+					var newPropX = Math.floor(Math.random()*size);
+					var newPropY = Math.floor(Math.random()*size);
 
-				var newProp = new prop(0, newPropX, newPropY);
-				props.push(newProp);
+					var newPropType = Math.floor(Math.random()*(2));
 
-				_FramesFromLastProp = 0;
-			}else{
-				_FramesFromLastProp++;
-			}
+					var newProp = new prop(newPropType, newPropX, newPropY);
+					props.push(newProp);
 
-			props = props.filter(function(prop, index){
-				props[index].framesLives--;
-				return props[index].framesLives > 0;
-			});
+					_FramesFromLastProp = 0;
+				}else{
+					_FramesFromLastProp++;
+				}
+
+				props = props.filter(function(prop, index){
+					props[index].framesLives--;
+					return props[index].framesLives > 0;
+				});
+
+			};
 			props.forEach(function(prop){
 				_ctx.fillStyle = prop.color;
 				_ctx.fillRect(prop.point.x*pixelsize,prop.point.y*pixelsize,pixelsize,pixelsize);
 			});
-
+			
 			/////////////////
 			//Snake updates
 			////////////////
@@ -97,7 +113,7 @@
 			////////////////
 			_ctx.fillStyle
 			_ctx.font = "48px serif";
-			_ctx.fillText(scores, size*pixelsize-50, 50);
+			_ctx.fillText(scores, size*pixelsize-100, 50);
 		}
 
 		this.__init__();
@@ -150,6 +166,11 @@
 			var rndX = 	Math.floor(Math.random()*(size/2)+size/4),
 				rndY = 	Math.floor(Math.random()*(size/2)+size/4);
 
+			_snakeLength = 1;
+			_direction = "up";
+			_directionToSet = null;
+			_isAlive = true;
+			_needsToAddBlockCount = 0;
 			//create head
 			_anchorPoint.x = rndX;
 			_anchorPoint.y = rndY;
@@ -180,7 +201,8 @@
 
 		 function kill(){
 			_isAlive = false;
-			alert("You're failed!");
+			isGameRun = false;
+			alert("You're failed!!!");
 		};
 
 		function update(){
@@ -213,7 +235,7 @@
 			//////////////////////
 			// DUMB WAYS TO DIE
 			//
-			if(_anchorPoint.x < 0 || _anchorPoint.y < 0 || _anchorPoint.x >= size || _anchorPoint.y >= size || _snakeBlocks[_anchorPoint.x][_anchorPoint.y].enabled){
+			if( _snakeLength + _needsToAddBlockCount <= 0 || _anchorPoint.x < 0 || _anchorPoint.y < 0 || _anchorPoint.x >= size || _anchorPoint.y >= size || _snakeBlocks[_anchorPoint.x][_anchorPoint.y].enabled){
 				this.kill();
 				return;
 			}
@@ -233,24 +255,35 @@
 			_snakeBlocks[_anchorPoint.x][_anchorPoint.y].create(_direction);
 
 
+			if(_needsToAddBlockCount < 1){
+				var firstLoop = true;
+				do{
+					var backAnchorPoint_old = _snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y];
 
-			if(_needsToAddBlockCount == 0){
-				var backAnchorPoint_old = _snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y];
+					_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
 
-				_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
+					if(backAnchorPoint_old.direction === "up"){
+						_backAnchorPoint.y--;
+					}
+					if(backAnchorPoint_old.direction === "down"){
+						_backAnchorPoint.y++;
+					}
+					if(backAnchorPoint_old.direction === "right"){
+						_backAnchorPoint.x++;
+					}
+					if(backAnchorPoint_old.direction === "left"){
+						_backAnchorPoint.x--;
+					}
 
-				if(backAnchorPoint_old.direction === "up"){
-					_backAnchorPoint.y--;
+					if(!firstLoop){
+						_needsToAddBlockCount+= _needsToAddBlockCount < 0 ? 1 : 0;
+						_snakeLength--;
+					}else
+					{
+						firstLoop = false;
+					}
 				}
-				if(backAnchorPoint_old.direction === "down"){
-					_backAnchorPoint.y++;
-				}
-				if(backAnchorPoint_old.direction === "right"){
-					_backAnchorPoint.x++;
-				}
-				if(backAnchorPoint_old.direction === "left"){
-					_backAnchorPoint.x--;
-				}
+				while(_needsToAddBlockCount < 0)
 
 			}else{
 				_needsToAddBlockCount--;
@@ -286,7 +319,7 @@
 	game.run();
 
 	window.addEventListener("keydown", function(e){
-		//console.log(e.keyCode);
+		console.log(e.keyCode);
 		switch(e.keyCode){
 			case 37:
 			snake.setDirection("left");
@@ -302,6 +335,9 @@
 			break;
 			case 32:
 			snake.addBlocks(10);
+			break;
+			case 82:
+			game.restartGame();
 			break;
 		}
 	});
