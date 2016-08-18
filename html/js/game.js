@@ -6,7 +6,9 @@
 		pixelsize = 15,
 		props = [],
 		scores = 0,
-		isGameRun = false;
+		isGameRun = false,
+		isPause = false,
+		isGameOver = false;
 
 	var prop = function(index,x,y){
 		var _scores = [100, -200],
@@ -34,6 +36,7 @@
 		this.loop = loop;
 		this.updateAndDrow = updateAndDrow;
 		this.restartGame = restartGame;
+		this.pause = pause;
 
 		function __init__(){
 			canvas.width = size*pixelsize;
@@ -49,11 +52,23 @@
 			window.game.loop();
 		};
 
+		function pause(){
+			if(isGameRun){
+				isPause = true;
+				isGameRun = false;
+			}
+			else{
+				isPause = false;
+				isGameRun = true;
+			}
+		}
 		function restartGame(){
 			snake.__init__();
 			scores = 0;
 			props = [];
 			isGameRun = true;
+			isGameOver = false;
+			isPause = false;
 		};
 
 		function loop(){
@@ -61,7 +76,7 @@
 			_now = Date.now();
     		_elapsed = _now - _then;
 
-    		if (_elapsed > _fpsInterval) {
+    		if (_elapsed > _fpsInterval && isGameRun) {
     			_then = _now - (_elapsed % _fpsInterval);
 
 				updateAndDrow();
@@ -123,7 +138,7 @@
 			//Drow grid
 			////////////////
 			ctx.strokeStyle="#f1f1f1";
-			
+
 			for (var i = 1; i < size; i++) {
 				ctx.beginPath();
 				ctx.moveTo(i*pixelsize,0);
@@ -205,6 +220,8 @@
 
 		function setDirection(val){
 			
+			if(!isGameRun)
+				return;
 			if(_direction == "right" && val == "left")
 				return;
 			if(_direction == "left" && val == "right")
@@ -225,6 +242,7 @@
 		 function kill(){
 			_isAlive = false;
 			isGameRun = false;
+			isGameOver = true;
 			alert("You're failed!!!");
 		};
 
@@ -345,19 +363,23 @@
 		console.log(e.keyCode);
 		switch(e.keyCode){
 			case 37:
+			case 65:
 			snake.setDirection("left");
 			break;
 			case 38:
+			case 87:
 			snake.setDirection("up");
 			break;
 			case 39:
+			case 68:
 			snake.setDirection("right");
 			break;
 			case 40:
+			case 83:
 			snake.setDirection("down");
 			break;
 			case 32:
-			snake.addBlocks(10);
+			game.pause();
 			break;
 			case 82:
 			game.restartGame();
