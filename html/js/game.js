@@ -24,11 +24,15 @@
 			colors: ["#e0ba00", "#FF0000", "#00FF00", "#000"],
 			calories: [1, -2, 2, 0],
 			framesLives: [120, 10, 60, 200],
-			isKillings: [false, false,false,true]
+			isKillings: [false, false,false,true],
+
+			chanceOfBomb: 0.1
 		},
 		snake:{
 			color_alive: "#0000FF",
-			color_dead: "#FF0000"
+			color_dead: "#888",
+			max_speed: 80,
+			additionalSpeed: 0.2
 		}
 	};
 
@@ -64,14 +68,15 @@
 		this.restartGame = restartGame;
 		this.pause = pause;
 		this.dead = dead;
+		this.onEat = onEat;
 
 		function __init__(settings){
 
 			//console.log(defaultSettings);
 
 			defaultSettings.game = settings.game ? Object.assign(defaultSettings.game, settings.game) : defaultSettings.game;
-			defaultSettings.props = settings.props ? Object.assign(defaultSettings.props, settings.props) : defaultSettings.game;
-			defaultSettings.snake = settings.snake ? Object.assign(defaultSettings.snake, settings.snake) : defaultSettings.game;
+			defaultSettings.props = settings.props ? Object.assign(defaultSettings.props, settings.props) : defaultSettings.props;
+			defaultSettings.snake = settings.snake ? Object.assign(defaultSettings.snake, settings.snake) : defaultSettings.snake;
 			_settings = defaultSettings;
 
 			//console.log(defaultSettings);
@@ -89,6 +94,13 @@
 			canvas.height = size*pixelsize;
 		};
 
+		function onEat(){
+			//console.log("EAT");
+			if(_fps < _settings.snake.max_speed)
+				_fps += _settings.snake.additionalSpeed;
+			_fpsInterval = 1000 / _fps;
+		};
+
 		function dead(){
 			_lives--;
 			if(_lives <= 0){
@@ -100,7 +112,7 @@
 			}
 		};
 
-		function run(settings){
+		function run(){
 
 			_fpsInterval = 1000 / _fps;
     		_then = Date.now();
@@ -125,6 +137,9 @@
 		function restartGame(){
 			snake.__init__(_settings.snake, this);
 			scores = 0;
+			_fps =_settings.game.fps;
+			_fpsInterval = 1000 / _fps;
+			_lives = _settings.game.lives;
 			props = [];
 			isGameRun = true;
 			isGameOver = false;
@@ -150,6 +165,8 @@
 			//Props generation
 			////////////////
 			
+			//console.log(_fps);
+
 			if(isGameRun){
 				if(_FramesFromLastProp >= _FramesPerProp && props.length < _maxPropsCount){
 
@@ -160,7 +177,7 @@
 						newPropY = Math.floor(Math.random()*size);
 					}while(snake.blocks[newPropX][newPropY].enabled);
 
-					var newPropType = Math.random() > 0.7 ? (Math.random() >= 0.7 ? 3 : 1) : (Math.random() >= 0.5 ? 2 : 0);
+					var newPropType = Math.random() <= _settings.props.chanceOfBomb ? (Math.random() >= 0.7 ? 3 : 1) : (Math.random() >= 0.5 ? 2 : 0);
 
 					var newProp = new prop(newPropType, newPropX, newPropY, _settings.props);
 					props.push(newProp);
@@ -193,6 +210,9 @@
 			_ctx.fillStyle
 			_ctx.font = "48px serif";
 			_ctx.fillText(scores, size*pixelsize-100, 50);
+
+			//ctx.font = "48px serif";
+			ctx.fillText(_lives, 0, 50);
 
 			/////////////////
 			//Drow grid
@@ -354,6 +374,7 @@
 			props = props.filter(function(prop){
 				if(prop.point.x == _anchorPoint.x && prop.point.y == _anchorPoint.y)
 				{
+					_gameObj.onEat();
 					addBlocks(prop.calories);
 					scores += prop.score;
 					if(prop.isKilling){
@@ -411,9 +432,6 @@
 
 			ctx.fillStyle = _isAlive ? _snakeColor.alive : _snakeColor.dead;
 
-			ctx.font = "48px serif";
-			ctx.fillText(_snakeLength, 0, 50);
-
 			for (var x = 0; x < _snakeBlocks.length; x++) {
 				for (var y = 0; y < _snakeBlocks[x].length; y++){
 					if(_snakeBlocks[x][y].enabled){
@@ -431,11 +449,45 @@
 
 
 	window.game = game;
-	game.__init__({
-		snake:{
-			color_alive: "#888"
-		}
-	});
+
+	var difficulties = {
+	"Easy" : {
+				props:{
+					chanceOfBomb: 0.1,
+				},
+				game:{
+					lives: 3
+				},
+				snake:{
+					additionalSpeed: 0.2
+				}
+			},
+	"Normal" : {
+				props:{
+					chanceOfBomb: 0.25,
+				},
+				game:{
+					lives: 2
+				},
+				snake:{
+					additionalSpeed: 0.4
+				}
+			},
+	"Hard" : {
+				props:{
+					chanceOfBomb: 0.5,
+				},
+				game:{
+					lives: 1,
+					fps: 20
+				},
+				snake:{
+					additionalSpeed: 0.7
+				}
+			}
+	};
+
+	game.__init__(difficulties["Hard"]);
 	game.run();
 
 	window.addEventListener("keydown", function(e){
