@@ -10,12 +10,33 @@
 		isPause = false,
 		isGameOver = false;
 
-	var prop = function(index,x,y){
-		var _scores = [50, -200, 300, 0],
-			_colors = ["#e0ba00", "#FF0000", "#00FF00", "#000"],
-			_calories = [1, -2, 2, 0],
-			_framesLives = [120, 10, 60, 200];
-			_isKillings = [false, false,false,true];
+	var defaultSettings = {
+		game: {
+			size: 50,
+			pixelsize: 15,
+			fps: 15
+		},
+		props:{
+			framesPerProp: 10,
+			maxPropsCount: 3,
+			scores: [50, -200, 300, 0],
+			colors: ["#e0ba00", "#FF0000", "#00FF00", "#000"],
+			calories: [1, -2, 2, 0],
+			framesLives: [120, 10, 60, 200],
+			isKillings: [false, false,false,true]
+		},
+		snake:{
+			color_alive: "#0000FF",
+			color_dead: "#FF0000"
+		}
+	};
+
+	var prop = function(index,x,y, settings){
+		var _scores = settings.scores,
+			_colors = settings.colors,
+			_calories = settings.calories,
+			_framesLives = settings.framesLives;
+			_isKillings = settings.isKillings;
 
 		this.point = {x : x, y: y};
 		this.score = _scores[index];
@@ -31,7 +52,8 @@
 			_stop = false,
 			_frameCount = 0,
 			_fps = 15, _fpsInterval, _startTime, _now, _then, _elapsed,
-			_FramesPerProp = 10, _FramesFromLastProp = 0, _maxPropsCount = 3;
+			_FramesPerProp = 10, _FramesFromLastProp = 0, _maxPropsCount = 3,
+			_settings = null;
 
 		this.__init__ = __init__;
 		this.run = run;
@@ -40,15 +62,37 @@
 		this.restartGame = restartGame;
 		this.pause = pause;
 
-		function __init__(){
+		function __init__(settings){
+
+			//console.log(defaultSettings);
+
+			defaultSettings.game = settings.game ? Object.assign(defaultSettings.game, settings.game) : defaultSettings.game;
+			defaultSettings.props = settings.props ? Object.assign(defaultSettings.props, settings.props) : defaultSettings.game;
+			defaultSettings.snake = settings.snake ? Object.assign(defaultSettings.snake, settings.snake) : defaultSettings.game;
+			_settings = defaultSettings;
+
+			//console.log(defaultSettings);
+
+			snake.__init__(_settings.snake);
+
+    		size = _settings.game.size;
+    		pixelsize = _settings.game.pixelsize;
+    		_fps = _settings.game.fps;
+    		_FramesPerProp = _settings.props.framesPerProp;
+    		_maxPropsCount = _settings.props.maxPropsCount;
+
+
 			canvas.width = size*pixelsize;
 			canvas.height = size*pixelsize;
 		};
 
-		function run(){
+		function run(settings){
+
 			_fpsInterval = 1000 / _fps;
     		_then = Date.now();
     		_startTime = _then;
+
+    		//_settings = settings ? settings : _settings;
 
     		isGameRun = true;
 			window.game.loop();
@@ -65,7 +109,7 @@
 			}
 		}
 		function restartGame(){
-			snake.__init__();
+			snake.__init__(_settings.snake);
 			scores = 0;
 			props = [];
 			isGameRun = true;
@@ -104,7 +148,7 @@
 
 					var newPropType = Math.random() > 0.7 ? (Math.random() >= 0.7 ? 3 : 1) : (Math.random() >= 0.5 ? 2 : 0);
 
-					var newProp = new prop(newPropType, newPropX, newPropY);
+					var newProp = new prop(newPropType, newPropX, newPropY, _settings.props);
 					props.push(newProp);
 
 					_FramesFromLastProp = 0;
@@ -156,7 +200,7 @@
 
 		}
 
-		this.__init__();
+		//this.__init__();
 	})();
 
 
@@ -168,8 +212,12 @@
 			_backAnchorPoint = {x: 0, y: 0},
 			_snakeLength = 1,
 			_needsToAddBlockCount = 0;
-			_isAlive = true;
+			_isAlive = true,
 
+			_snakeColor = {
+				alive: "#0000FF",
+				dead: "#FF0000"
+			};
 
 		this.__init__ = __init__;
 		this.setDirection = setDirection;
@@ -195,7 +243,10 @@
 			};
 		};
 
-		function __init__(){
+		function __init__(settings){
+			_snakeColor.alive = settings.color_alive;
+			_snakeColor.dead = settings.color_dead;
+
 			for (var x = 0; x < size; x++) {
 				_snakeBlocks[x] = [];
 				for (var y = 0; y < size; y++) {
@@ -342,7 +393,7 @@
 
 		 function drow(ctx){
 
-			ctx.fillStyle = _isAlive ? "#0000FF" : "#FF0000";
+			ctx.fillStyle = _isAlive ? _snakeColor.alive : _snakeColor.dead;
 
 			ctx.font = "48px serif";
 			ctx.fillText(_snakeLength, 0, 50);
@@ -356,7 +407,7 @@
 			}
 		};
 
-		this.__init__();
+		//this.__init__();
 		this.blocks = _snakeBlocks;
 
 	})();
@@ -364,10 +415,15 @@
 
 
 	window.game = game;
+	game.__init__({
+		snake:{
+			color_alive: "#888"
+		}
+	});
 	game.run();
 
 	window.addEventListener("keydown", function(e){
-		console.log(e.keyCode);
+		//console.log(e.keyCode);
 		switch(e.keyCode){
 			case 37:
 			case 65:
