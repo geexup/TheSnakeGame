@@ -13,6 +13,7 @@
 	var defaultSettings = {
 		game: {
 			size: 50,
+			lives: 3,
 			pixelsize: 15,
 			fps: 15
 		},
@@ -53,7 +54,8 @@
 			_frameCount = 0,
 			_fps = 15, _fpsInterval, _startTime, _now, _then, _elapsed,
 			_FramesPerProp = 10, _FramesFromLastProp = 0, _maxPropsCount = 3,
-			_settings = null;
+			_settings = null,
+			_lives = 3;
 
 		this.__init__ = __init__;
 		this.run = run;
@@ -61,6 +63,7 @@
 		this.updateAndDrow = updateAndDrow;
 		this.restartGame = restartGame;
 		this.pause = pause;
+		this.dead = dead;
 
 		function __init__(settings){
 
@@ -73,17 +76,28 @@
 
 			//console.log(defaultSettings);
 
-			snake.__init__(_settings.snake);
+			snake.__init__(_settings.snake, this);
 
     		size = _settings.game.size;
     		pixelsize = _settings.game.pixelsize;
     		_fps = _settings.game.fps;
     		_FramesPerProp = _settings.props.framesPerProp;
     		_maxPropsCount = _settings.props.maxPropsCount;
-
+    		_lives = _settings.game.lives;
 
 			canvas.width = size*pixelsize;
 			canvas.height = size*pixelsize;
+		};
+
+		function dead(){
+			_lives--;
+			if(_lives <= 0){
+				isGameRun = false;
+				isGameOver = true;
+				alert("You're failed!!!");
+			}else{
+				snake.__init__(_settings.snake, this);
+			}
 		};
 
 		function run(settings){
@@ -109,7 +123,7 @@
 			}
 		}
 		function restartGame(){
-			snake.__init__(_settings.snake);
+			snake.__init__(_settings.snake, this);
 			scores = 0;
 			props = [];
 			isGameRun = true;
@@ -217,7 +231,9 @@
 			_snakeColor = {
 				alive: "#0000FF",
 				dead: "#FF0000"
-			};
+			},
+
+			_gameObj = null;
 
 		this.__init__ = __init__;
 		this.setDirection = setDirection;
@@ -243,7 +259,9 @@
 			};
 		};
 
-		function __init__(settings){
+		function __init__(settings, game){
+			_gameObj = game;
+
 			_snakeColor.alive = settings.color_alive;
 			_snakeColor.dead = settings.color_dead;
 
@@ -294,9 +312,7 @@
 
 		 function kill(){
 			_isAlive = false;
-			isGameRun = false;
-			isGameOver = true;
-			alert("You're failed!!!");
+			_gameObj.dead();
 		};
 
 		function update(){
