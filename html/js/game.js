@@ -11,6 +11,12 @@
 		isGameOver = false;
 
 	var defaultSettings = {
+		ui: {
+			scores_label: ".scores",
+			lives_label: ".lives",
+			main_canvas: "#THE_SNAKE",
+			status_label: ".status"
+		},
 		game: {
 			size: 50,
 			lives: 3,
@@ -36,6 +42,10 @@
 		}
 	};
 
+	function randomString(length) {
+    	return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
+	}
+
 	var prop = function(index,x,y, settings){
 		var _scores = settings.scores,
 			_colors = settings.colors,
@@ -59,7 +69,8 @@
 			_fps = 15, _fpsInterval, _startTime, _now, _then, _elapsed,
 			_FramesPerProp = 10, _FramesFromLastProp = 0, _maxPropsCount = 3,
 			_settings = null,
-			_lives = 3;
+			_lives = 3,
+			_userID = localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", randomString(30)), localStorage.userID][1];
 
 		this.__init__ = __init__;
 		this.run = run;
@@ -69,6 +80,7 @@
 		this.pause = pause;
 		this.dead = dead;
 		this.onEat = onEat;
+		this.updateStatus = updateStatus;
 
 		function __init__(settings){
 
@@ -77,7 +89,14 @@
 			defaultSettings.game = settings.game ? Object.assign(defaultSettings.game, settings.game) : defaultSettings.game;
 			defaultSettings.props = settings.props ? Object.assign(defaultSettings.props, settings.props) : defaultSettings.props;
 			defaultSettings.snake = settings.snake ? Object.assign(defaultSettings.snake, settings.snake) : defaultSettings.snake;
+			defaultSettings.ui = settings.ui ? Object.assign(defaultSettings.ui, settings.ui) : defaultSettings.ui;
 			_settings = defaultSettings;
+
+			if(settings.name){
+				document.body.className = settings.name;
+			}
+
+			//this.updateSa
 
 			//console.log(defaultSettings);
 
@@ -106,7 +125,8 @@
 			if(_lives <= 0){
 				isGameRun = false;
 				isGameOver = true;
-				alert("You're failed!!!");
+				//alert("You're failed!!!");
+				//console.log("FAIL");
 			}else{
 				snake.__init__(_settings.snake, this);
 			}
@@ -133,10 +153,13 @@
 				isPause = false;
 				isGameRun = true;
 			}
+
+			//document.querySelector(_settings.ui.main_canvas).className = isPause ? "paused" : "run";
 		}
 		function restartGame(){
 			snake.__init__(_settings.snake, this);
 			scores = 0;
+			_FramesFromLastProp = 0;
 			_fps =_settings.game.fps;
 			_fpsInterval = 1000 / _fps;
 			_lives = _settings.game.lives;
@@ -151,7 +174,7 @@
 			_now = Date.now();
     		_elapsed = _now - _then;
 
-    		if (_elapsed > _fpsInterval && isGameRun) {
+    		if (_elapsed > _fpsInterval) {
     			_then = _now - (_elapsed % _fpsInterval);
 
 				updateAndDrow();
@@ -192,27 +215,39 @@
 					return props[index].framesLives > 0;
 				});
 
-			};
-			props.forEach(function(prop){
-				_ctx.fillStyle = prop.color;
-				_ctx.fillRect(prop.point.x*pixelsize,prop.point.y*pixelsize,pixelsize,pixelsize);
-			});
+			
+			
 			
 			/////////////////
 			//Snake updates
 			////////////////
 			snake.update();
+
+			};
+
+			props.forEach(function(prop){
+				_ctx.fillStyle = prop.color;
+				_ctx.fillRect(prop.point.x*pixelsize,prop.point.y*pixelsize,pixelsize,pixelsize);
+			});
+
 			snake.drow(_ctx);
 
 			/////////////////
 			//Score text update
 			////////////////
-			_ctx.fillStyle
-			_ctx.font = "48px serif";
-			_ctx.fillText(scores, size*pixelsize-100, 50);
+			
 
-			//ctx.font = "48px serif";
-			ctx.fillText(_lives, 0, 50);
+			// _ctx.fillStyle
+			// _ctx.font = "48px serif";
+			// _ctx.fillText(scores, size*pixelsize-100, 50);
+
+			// //ctx.font = "48px serif";
+			// ctx.fillText(_lives, 0, 50);
+
+
+			
+
+
 
 			/////////////////
 			//Drow grid
@@ -232,9 +267,30 @@
 				ctx.stroke();
 			}
 
+			updateStatus();
 		}
 
 		//this.__init__();
+		function updateStatus(){
+
+			var lives_label = document.querySelector(_settings.ui.lives_label);
+			lives_label.textContent = _lives;
+
+			var scores_label = document.querySelector(_settings.ui.scores_label);
+			scores_label.textContent = scores;
+
+
+			document.querySelector(_settings.ui.main_canvas).className = isPause ? "paused" : "run";
+			
+			if(isGameOver){
+				document.querySelector(_settings.ui.status_label).textContent = "Game Over (Press R)";
+			}else if(isPause){
+				document.querySelector(_settings.ui.status_label).textContent = "Game Paused (Press P)";
+			}else{
+				document.querySelector(_settings.ui.status_label).textContent = "";
+			}
+		}
+
 	})();
 
 
@@ -307,6 +363,8 @@
 
 			_backAnchorPoint.x = _anchorPoint.x;
 			_backAnchorPoint.y = _anchorPoint.y;
+
+
 		};
 
 		function setDirection(val){
@@ -450,48 +508,56 @@
 
 	window.game = game;
 
-	var difficulties = {
-	"Easy" : {
-				props:{
-					chanceOfBomb: 0.1,
-				},
-				game:{
-					lives: 3
-				},
-				snake:{
-					additionalSpeed: 0.2
-				}
-			},
-	"Normal" : {
-				props:{
-					chanceOfBomb: 0.25,
-				},
-				game:{
-					lives: 2
-				},
-				snake:{
-					additionalSpeed: 0.4
-				}
-			},
-	"Hard" : {
-				props:{
-					chanceOfBomb: 0.5,
-				},
-				game:{
-					lives: 1,
-					fps: 20
-				},
-				snake:{
-					additionalSpeed: 0.7
-				}
-			}
-	};
+	var difficulties = [
+		{
+			name: "EasyMode",
 
-	game.__init__(difficulties["Hard"]);
+			props:{
+				chanceOfBomb: 0.1,
+			},
+			game:{
+				lives: 3,
+				fps: 10
+			},
+			snake:{
+				additionalSpeed: 0.08
+			}
+		},
+		{
+			name: "NormalMode",
+
+			props:{
+				chanceOfBomb: 0.25,
+			},
+			game:{
+				lives: 2
+			},
+			snake:{
+				additionalSpeed: 0.4
+			}
+		},
+		{
+			name: "HardCoreMode",
+
+			props:{
+				chanceOfBomb: 0.5,
+			},
+			game:{
+				lives: 1,
+				fps: 20
+			},
+			snake:{
+				additionalSpeed: 0.7
+			}
+		}
+	];
+
+	game.__init__(difficulties[0]);
 	game.run();
+	game.pause();
 
 	window.addEventListener("keydown", function(e){
-		//console.log(e.keyCode);
+		console.log(e.keyCode);
 		switch(e.keyCode){
 			case 37:
 			case 65:
@@ -509,7 +575,7 @@
 			case 83:
 			snake.setDirection("down");
 			break;
-			case 32:
+			case 80:
 			game.pause();
 			break;
 			case 82:
