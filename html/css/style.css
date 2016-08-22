@@ -11,6 +11,10 @@ body {
     font-family: sans-serif;
 }
 
+body.HardCoreMode{
+	background-color: rgba(199, 74, 74, 0.66);
+}
+
 .row{
 	width: 752px;
 	margin: 0 auto;

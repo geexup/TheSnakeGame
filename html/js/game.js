@@ -15,7 +15,8 @@
 			scores_label: ".scores",
 			lives_label: ".lives",
 			main_canvas: "#THE_SNAKE",
-			status_label: ".status"
+			status_label: ".status",
+			results_table: "#resultsTable"
 		},
 		game: {
 			size: 50,
@@ -70,7 +71,9 @@
 			_FramesPerProp = 10, _FramesFromLastProp = 0, _maxPropsCount = 3,
 			_settings = null,
 			_lives = 3,
-			_userID = localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", randomString(30)), localStorage.userID][1];
+			_userID = localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", randomString(30)), localStorage.userID][1],
+			_userName = "",
+			_gameModeName = "Default";
 
 		this.__init__ = __init__;
 		this.run = run;
@@ -94,6 +97,7 @@
 
 			if(settings.name){
 				document.body.className = settings.name;
+				_gameModeName = settings.name;
 			}
 
 			//this.updateSa
@@ -125,6 +129,12 @@
 			if(_lives <= 0){
 				isGameRun = false;
 				isGameOver = true;
+
+				if(_userName === "")
+				{
+					_userName = prompt("Enter Your Name");
+				}
+				console.log([_userName, _userID, _gameModeName, scores]);
 				//alert("You're failed!!!");
 				//console.log("FAIL");
 			}else{
@@ -552,12 +562,12 @@
 		}
 	];
 
-	game.__init__(difficulties[0]);
+	game.__init__(difficulties[prompt("0 - Easy, 1 - Normal, 2 - Hardcore")]);
 	game.run();
 	game.pause();
 
 	window.addEventListener("keydown", function(e){
-		console.log(e.keyCode);
+		//console.log(e.keyCode);
 		switch(e.keyCode){
 			case 37:
 			case 65:
@@ -582,6 +592,7 @@
 			game.restartGame();
 			break;
 		}
+		e.preventDefault();
 	});
 
 })();
