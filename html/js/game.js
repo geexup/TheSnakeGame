@@ -16,7 +16,8 @@
 			lives_label: ".lives",
 			main_canvas: "#THE_SNAKE",
 			status_label: ".status",
-			results_table: "#resultsTable"
+			results_table: "#resultsTable",
+			record_label: "#record"
 		},
 		game: {
 			size: 50,
@@ -84,6 +85,7 @@
 		this.dead = dead;
 		this.onEat = onEat;
 		this.updateStatus = updateStatus;
+		this.updateResults = updateResults;
 
 		function __init__(settings){
 
@@ -101,7 +103,7 @@
 			}
 
 			//this.updateSa
-
+			updateResults();
 			//console.log(defaultSettings);
 
 			snake.__init__(_settings.snake, this);
@@ -115,6 +117,37 @@
 
 			canvas.width = size*pixelsize;
 			canvas.height = size*pixelsize;
+		};
+
+		function sendResults(result){
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", "/Results", true);
+			xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+			xhr.send(JSON.stringify({
+				usrID: _userID,
+				name: result[0],
+				modeName: result[2],
+				score: result[3]
+			}));
+			updateResults();
+		};
+
+		function updateResults(){
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+			    	var htmlTable = '<tr align="left" class="header"><th>№</th><th>User Name</th><th>Game Mode</th><th>Scores</th></tr>';
+			    	var records = JSON.parse(xhttp.responseText);
+			    	console.log(records);
+			    	for (var i = records.length-1; i >= 0; i--) {
+			    		htmlTable += '<tr align="left" class="'+(records[i].me ? "me" : "")+'"><th>'+(records.length-i)+'</th><th>' + records[i].name+'</th><th>'+records[i].modeName+'</th><th>'+records[i].score+'</th></tr>';
+			    	}
+			    	console.log(document.querySelector(_settings.ui.results_table), _settings.ui.results_table);
+			    	document.querySelector(_settings.ui.results_table).innerHTML = htmlTable;
+				}
+			};
+			xhttp.open("GET", "/Results?usr="+_userID, true);
+  			xhttp.send();
 		};
 
 		function onEat(){
@@ -134,7 +167,9 @@
 				{
 					_userName = prompt("Enter Your Name");
 				}
-				console.log([_userName, _userID, _gameModeName, scores]);
+				localStorage.record = localStorage.record ? (localStorage.record <= scores ? scores : localStorage.record) : scores;
+				//console.log();
+				sendResults([_userName, _userID, _gameModeName, scores]);
 				//alert("You're failed!!!");
 				//console.log("FAIL");
 			}else{
@@ -288,6 +323,9 @@
 
 			var scores_label = document.querySelector(_settings.ui.scores_label);
 			scores_label.textContent = scores;
+
+			var record_label = document.querySelector(_settings.ui.record_label);
+			record_label.textContent = localStorage.record ? localStorage.record : 0;
 
 
 			document.querySelector(_settings.ui.main_canvas).className = isPause ? "paused" : "run";

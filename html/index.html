@@ -16,6 +16,7 @@
 		<div class="row">
 			<canvas id="THE_SNAKE" width="500px" height="500px">		
 			</canvas>
+			<h4>Текущий рекорд - <span id="record">0</span></h4>
 		</div>
 		<div class="row">
 			<h2>Управление</h2>
@@ -25,6 +26,7 @@
 		</div>
 		<div class="row">
 			<h2>Результаты</h2>
+			<input type="button" onClick="game.updateResults()" value="Update">
 			<table id="resultsTable">
 				<tr align="left" class="header">
 					<th>№</th>

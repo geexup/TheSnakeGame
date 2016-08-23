@@ -15,6 +15,15 @@ body.HardCoreMode{
 	background-color: rgba(199, 74, 74, 0.66);
 }
 
+
+#resultsTable tr{
+	background-color: rgba(214, 61, 61, 0.63);
+}
+#resultsTable tr.me
+{
+	background-color: rgba(100, 214, 61, 0.63);
+}
+
 .row{
 	width: 752px;
 	margin: 0 auto;
