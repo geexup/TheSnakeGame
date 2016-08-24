@@ -73,7 +73,7 @@
 			_settings = null,
 			_lives = 3,
 			_userID = localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", randomString(30)), localStorage.userID][1],
-			_userName = "",
+			_userName =  localStorage.userName ? localStorage.userName : "";
 			_gameModeName = "Default";
 
 		this.__init__ = __init__;
@@ -166,6 +166,7 @@
 				if(_userName === "")
 				{
 					_userName = prompt("Enter Your Name");
+					localStorage.userName = _userName;
 				}
 				localStorage.record = localStorage.record ? (localStorage.record <= scores ? scores : localStorage.record) : scores;
 				//console.log();
