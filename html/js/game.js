@@ -77,6 +77,8 @@
 			_gameModeName = "Default";
 
 		this.__init__ = __init__;
+		this.initWithMode = initWithMode;
+		this.initUI = initUI;
 		this.run = run;
 		this.loop = loop;
 		this.updateAndDrow = updateAndDrow;
@@ -86,7 +88,20 @@
 		this.onEat = onEat;
 		this.updateStatus = updateStatus;
 		this.updateResults = updateResults;
+		this.message = message;
 
+
+		function initUI(UISettings){
+			defaultSettings.ui = UISettings ? Object.assign(defaultSettings.ui, UISettings) : defaultSettings.ui;
+			if(_settings){
+				_settings.ui = defaultSettings.ui;
+			}else
+			{
+				_settings = {
+					ui: defaultSettings.ui
+				};
+			}
+		}
 		function __init__(settings){
 
 			//console.log(defaultSettings);
@@ -118,6 +133,57 @@
 			canvas.width = size*pixelsize;
 			canvas.height = size*pixelsize;
 		};
+
+		function initWithMode(mode){
+			var difficulties = [
+				{
+					name: "EasyMode",
+
+					props:{
+						chanceOfBomb: 0.1,
+					},
+					game:{
+						lives: 3,
+						fps: 10
+					},
+					snake:{
+						additionalSpeed: 0.08
+					}
+				},
+				{
+					name: "NormalMode",
+
+					props:{
+						chanceOfBomb: 0.25,
+					},
+					game:{
+						lives: 2
+					},
+					snake:{
+						additionalSpeed: 0.4
+					}
+				},
+				{
+					name: "HardCoreMode",
+
+					props:{
+						chanceOfBomb: 0.5,
+					},
+					game:{
+						lives: 1,
+						fps: 20
+					},
+					snake:{
+						additionalSpeed: 0.7
+					}
+				}
+			];
+
+			//restartGame();
+			this.__init__(typeof mode !== "undefined" ? difficulties[mode] : difficulties[prompt("0 - Easy, 1 - Normal, 2 - Hardcore")]);
+			this.run();
+			this.pause();
+		}
 
 		function sendResults(result){
 			var xhr = new XMLHttpRequest();
@@ -194,8 +260,10 @@
 			if(isGameRun){
 				isPause = true;
 				isGameRun = false;
+				message("Game Paused (Press P)");
 			}
 			else{
+				message("");
 				isPause = false;
 				isGameRun = true;
 			}
@@ -332,13 +400,13 @@
 			document.querySelector(_settings.ui.main_canvas).className = isPause ? "paused" : "run";
 			
 			if(isGameOver){
-				document.querySelector(_settings.ui.status_label).textContent = "Game Over (Press R)";
-			}else if(isPause){
-				document.querySelector(_settings.ui.status_label).textContent = "Game Paused (Press P)";
-			}else{
-				document.querySelector(_settings.ui.status_label).textContent = "";
+				message("Game Over (Press R)");
 			}
 		}
+
+		function message(msg){
+			document.querySelector(_settings ? _settings.ui.status_label : defaultSettings.ui.status_label).textContent = msg;
+		};
 
 	})();
 
@@ -557,56 +625,14 @@
 
 	window.game = game;
 
-	var difficulties = [
-		{
-			name: "EasyMode",
-
-			props:{
-				chanceOfBomb: 0.1,
-			},
-			game:{
-				lives: 3,
-				fps: 10
-			},
-			snake:{
-				additionalSpeed: 0.08
-			}
-		},
-		{
-			name: "NormalMode",
-
-			props:{
-				chanceOfBomb: 0.25,
-			},
-			game:{
-				lives: 2
-			},
-			snake:{
-				additionalSpeed: 0.4
-			}
-		},
-		{
-			name: "HardCoreMode",
-
-			props:{
-				chanceOfBomb: 0.5,
-			},
-			game:{
-				lives: 1,
-				fps: 20
-			},
-			snake:{
-				additionalSpeed: 0.7
-			}
-		}
-	];
-
-	game.__init__(difficulties[prompt("0 - Easy, 1 - Normal, 2 - Hardcore")]);
-	game.run();
-	game.pause();
+	//game.initWithMode();
+	game.initUI();
+	game.updateResults();
+	game.message("Select mode by key (Z, X, C)");
+	//game.pause();
 
 	window.addEventListener("keydown", function(e){
-		//console.log(e.keyCode);
+		console.log(e.keyCode);
 		switch(e.keyCode){
 			case 37:
 			case 65:
@@ -626,6 +652,18 @@
 			break;
 			case 80:
 			game.pause();
+			break;
+			case 77:
+			game.initWithMode();
+			break;
+			case 90:
+			game.initWithMode(0);
+			break;
+			case 88:
+			game.initWithMode(1);
+			break;
+			case 67:
+			game.initWithMode(2);
 			break;
 			case 82:
 			game.restartGame();
