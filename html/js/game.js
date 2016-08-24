@@ -205,8 +205,8 @@
 			    	var htmlTable = '<tr align="left" class="header"><th>№</th><th>User Name</th><th>Game Mode</th><th>Scores</th></tr>';
 			    	var records = JSON.parse(xhttp.responseText);
 			    	console.log(records);
-			    	for (var i = records.length-1; i >= 0; i--) {
-			    		htmlTable += '<tr align="left" class="'+(records[i].me ? "me" : "")+'"><th>'+(records.length-i)+'</th><th>' + records[i].name+'</th><th>'+records[i].modeName+'</th><th>'+records[i].score+'</th></tr>';
+			    	for (var i = 0; i < records.length; i++) {
+			    		htmlTable += '<tr align="left" class="'+(records[i].me ? "me" : "")+'"><th>'+(i+1)+'</th><th>' + records[i].name+'</th><th>'+records[i].modeName+'</th><th>'+records[i].score+'</th></tr>';
 			    	}
 			    	console.log(document.querySelector(_settings.ui.results_table), _settings.ui.results_table);
 			    	document.querySelector(_settings.ui.results_table).innerHTML = htmlTable;

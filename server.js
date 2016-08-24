@@ -11,12 +11,11 @@ app.use(bodyParser.json());
 
 
 app.post("/Results", function(req, res){
-	console.log(req.body);
+	console.log(recordTable);
 	recordTable.push(req.body);
-
 	recordTable = recordTable.sort(function(a, b){
 		return a.score - b.score;
-	}).slice(0,9);
+	}).reverse().slice(0,10);
 
 	res.end("Done");
 });
@@ -27,7 +26,7 @@ app.get("/Results", function(req, res){
 		return val;
 	});
 	res.json(tosend);
-})
+});
 
 app.listen(8080, function(){
 	console.log("Application lives here - http://localhost:8080/");
