@@ -13,13 +13,16 @@ app.use(bodyParser.json());
 app.post("/Results", function(req, res){
 	console.log(req.body);
 	recordTable.push(req.body);
-	res.end("wdawd");
+
+	recordTable = recordTable.sort(function(a, b){
+		return a.score - b.score;
+	}).slice(0,9);
+
+	res.end("Done");
 });
 
 app.get("/Results", function(req, res){
-	var tosend = recordTable.sort(function(a, b){
-		return a.score - b.score;
-	}).map(function(val){
+	var tosend = recordTable.map(function(val){
 		val.me = val.usrID == req.query.usr ? true : false;
 		return val;
 	});

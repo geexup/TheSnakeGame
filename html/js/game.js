@@ -618,7 +618,6 @@
 
 		//this.__init__();
 		this.blocks = _snakeBlocks;
-
 	})();
 
 
@@ -629,6 +628,10 @@
 	game.initUI();
 	game.updateResults();
 	game.message("Select mode by key (Z, X, C)");
+
+	setInterval(function(){
+		game.updateResults();
+	}, 3000);
 	//game.pause();
 
 	window.addEventListener("keydown", function(e){
