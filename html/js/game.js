@@ -123,6 +123,8 @@
 
 			snake.__init__(_settings.snake, this);
 
+			scores = 0;
+			
     		size = _settings.game.size;
     		pixelsize = _settings.game.pixelsize;
     		_fps = _settings.game.fps;
