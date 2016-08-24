@@ -281,6 +281,7 @@
 			isGameRun = true;
 			isGameOver = false;
 			isPause = false;
+			message("");
 		};
 
 		function loop(){
