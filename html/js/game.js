@@ -102,14 +102,18 @@
 			xhr.open("POST", "/Results", true);
 			xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					updateResults();
+				}
+			};
+
 			xhr.send(JSON.stringify({
 				usrID: _userID,
 				name: result[0],
 				modeName: result[2],
 				score: result[3]
 			}));
-
-			updateResults();
 		}
 
 		function updateResults(){
