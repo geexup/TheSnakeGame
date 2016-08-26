@@ -43,6 +43,7 @@
 		</div>
 	</div>
 	<script src="/js/game.js"></script>
+	<script src="/js/game_score.js"></script>
 	<script src="/js/game_defaultConsts.js"></script>
 	<script src="/js/game_snake_block.js"></script>
 	<script src="/js/game_prop.js"></script>
@@ -50,11 +51,6 @@
 	<script src="/js/game_keyboardEvents.js"></script>
 	<script>
 		game.init({});
-		game.updateResults();
-		game.message("Select mode by key (Z, X, C)");
-		setInterval(function(){
-			game.updateResults();
-		}, 3000);
 	</script>
 </body>
 </html>

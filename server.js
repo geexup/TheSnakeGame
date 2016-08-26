@@ -1,18 +1,15 @@
-var express = require("express"),
-	app = express(),
-
-recordTable = [
-];
-
+var express = require("express");
 var bodyParser = require('body-parser');
+
+var app = express();
+var recordTable = [];
 
 app.use(express.static("./html/"));
 app.use(bodyParser.json());
 
-
 app.post("/Results", function(req, res){
-	console.log(recordTable);
 	recordTable.push(req.body);
+
 	recordTable = recordTable.sort(function(a, b){
 		return a.score - b.score;
 	}).reverse().slice(0,10);
@@ -25,6 +22,7 @@ app.get("/Results", function(req, res){
 		val.me = val.usrID == req.query.usr ? true : false;
 		return val;
 	});
+
 	res.json(tosend);
 });
 

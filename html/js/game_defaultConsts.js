@@ -32,7 +32,8 @@ window.gameData.defaultSettings = {
 	};
 
 window.gameData.props = [];
-window.gameData.scores = 0;
+window.gameData.scores = null;
 window.gameData.isGameRun = false;
 window.gameData.isPause = false;
 window.gameData.isGameOver = false;
+window.gameData.isModeInitialised = false;
