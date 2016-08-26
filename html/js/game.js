@@ -4,7 +4,6 @@ function randomString(length) {
     return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
 }
 
-
 function TheGame(){
 	this._ctx =					null;
 	this._width =				0;
@@ -32,9 +31,6 @@ function TheGame(){
 
 	TheGame.instance = this;
 }
-
-
-
 
 TheGame.prototype.init = function(settings){
 	this._settings = {};
