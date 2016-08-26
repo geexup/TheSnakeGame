@@ -1,20 +1,38 @@
 (function(){
 
+/** Class representing a Bodypart of Snake. */
 function SnakeBlock(enabled, direction){
 	this.enabled =		enabled;
 	this.direction =	direction;
 };
 
-SnakeBlock.prototype.delete = function(){
+SnakeBlock.prototype = {
+	delete: deleteF,
+	create: create,
+	toString: toString
+};
+
+/**
+ * Function delete block (makes it disabled)
+ */
+function deleteF(){
 	this.enabled =		false;
 };
 
-SnakeBlock.prototype.create = function(direction){
+/**
+ * Function create (enable) snake block
+ * @param {string} direction - direction of snake continuum
+ */
+function create(direction){
 	this.enabled =		true;
 	this.direction =	direction;
 };
 
-SnakeBlock.prototype.toString = function(){
+/**
+ * Function returns text representation of block
+ * @return {string} text representation ("0"/"1")
+ */
+function toString(){
 	return this.enabled ? "1" : "0";
 };
 

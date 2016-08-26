@@ -1,4 +1,7 @@
-window.gameData.Prop = function Prop(index,x,y, settings){
+(function(){
+
+/** Class representing a Block that Snake can eat in game. */
+function Prop(index, x, y, settings){
 	this.point =		{x : x, y: y};
 	this.score =		settings.scores[index];
 	this.color =		settings.colors[index];
@@ -6,3 +9,7 @@ window.gameData.Prop = function Prop(index,x,y, settings){
 	this.framesLives =	settings.framesLives[index];
 	this.isKilling =	settings.isKillings[index];
 };
+
+window.gameData.Prop = Prop;
+
+})();

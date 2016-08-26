@@ -1,9 +1,10 @@
 (function(){
 
 function randomString(length) {
-    return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1);
+    return 
 }
 
+/** Class representing The Main Game. */
 function TheGame(){
 	this._ctx =					null;
 	this._width =				0;
@@ -21,8 +22,7 @@ function TheGame(){
 	this._lives =				3;
 	this._gameModeName =		"Default";
 	this._settings =			{};
-
-	this._userID =				localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", randomString(30)), localStorage.userID][1];
+	this._userID =				localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", Math.round(Math.pow(36, 30 + 1) - Math.random() * Math.pow(36, 30)).toString(36).slice(1)), localStorage.userID][1];
 	this._userName =			localStorage.userName ? localStorage.userName : "";
 
 	if(TheGame.instance){
@@ -32,7 +32,26 @@ function TheGame(){
 	TheGame.instance = this;
 }
 
-TheGame.prototype.init = function(settings){
+TheGame.prototype = {
+	init:			init,
+	initWithMode:	initWithMode,
+	onEat:			onEat,
+	dead:			dead,
+	run:			run,
+	pause:			pause,
+	restartGame:	restartGame,
+	loop:			loop,
+	updateAndDrow:	updateAndDrow,
+	updateStatus:	updateStatus,
+	message:		message,
+	updateResults:	updateResults
+};
+
+/**
+ * Function initializete the game with settings
+ * @param {Object} settings - an array of keys that contain game parameters
+ */
+function init(settings){
 	this._settings = {};
 	this._settings.game = settings.game ? Object.assign(window.gameData.defaultSettings.game, settings.game) : window.gameData.defaultSettings.game;
 	this._settings.props = settings.props ? Object.assign(window.gameData.defaultSettings.props, settings.props) : window.gameData.defaultSettings.props;
@@ -69,7 +88,11 @@ TheGame.prototype.init = function(settings){
 	this.message("Select mode by key (Z, X, C)");
 };
 
-TheGame.prototype.initWithMode = function(mode){
+/**
+ * Function initializete the game with mode number
+ * @param {Number} mode - number of mode
+ */
+function initWithMode(mode){
 	var difficulties = [{
 			name:	"EasyMode",
 			props:	{ chanceOfBomb: 0.1 },
@@ -93,7 +116,10 @@ TheGame.prototype.initWithMode = function(mode){
 	this.pause();
 };
 
-TheGame.prototype.onEat = function(){
+/**
+ * Function change game speed whaen snake eats block
+ */
+function onEat(){
 	if(this._fps < this._settings.snake.max_speed){
 		this._fps = this._fps + this._settings.snake.additionalSpeed;
 	}
@@ -101,10 +127,13 @@ TheGame.prototype.onEat = function(){
 	this._fpsInterval = 1000 / this._fps;
 };
 
-TheGame.prototype.dead = function(){
+/**
+ * Function check if user have more lives when snake is dead or game is already over
+ */
+function dead(){
 	this._lives--;
 
-	if(this._lives <= 0){
+	if (this._lives <= 0){
 		window.gameData.isGameRun = false;
 		window.gameData.isGameOver = true;
 		
@@ -118,12 +147,15 @@ TheGame.prototype.dead = function(){
 
 		localStorage.record = localStorage.record ? (localStorage.record <= window.gameData.scores.getScores() ? window.gameData.scores.getScores() : localStorage.record) : window.gameData.scores.getScores();
 		window.gameData.scores.sendResults([this._userName, this._userID, this._gameModeName, window.gameData.scores.getScores()],  this._settings.ui.results_table);
-	}else{
+	} else {
 		window.gameData.snake = new window.gameData.Snake(this._settings.snake, this);
 	}
 };
 
-TheGame.prototype.run = function(){
+/**
+ * Function runs main game loop
+ */
+function run(){
 	this._fpsInterval = 1000 / this._fps;
   	this._then = Date.now();
   	this._startTime = this._then;
@@ -134,22 +166,29 @@ TheGame.prototype.run = function(){
 	this.loop();
 };
 
-TheGame.prototype.pause = function(){
+/**
+ * Function pause/play game
+ */
+function pause(){
 	if(window.gameData.isGameRun){
 		window.gameData.isPause = true;
 		window.gameData.isGameRun = false;
 
 		this.message("Game Paused (Press P)");
-	}else{
+	} else {
 		this.message("");
 		window.gameData.isPause = false;
 		window.gameData.isGameRun = true;
 	}
 };
 
-TheGame.prototype.restartGame = function(){
-	if(!window.gameData.isModeInitialised)
+/**
+ * Function re-initializete the game 
+ */
+function restartGame(){
+	if(!window.gameData.isModeInitialised){
 		return;
+	}
 
 	window.gameData.snake = new window.gameData.Snake(this._settings.snake, this);
 	window.gameData.scores = new window.gameData.Scores();
@@ -167,7 +206,10 @@ TheGame.prototype.restartGame = function(){
 	this.message("");
 };
 
-TheGame.prototype.loop = function(){
+/**
+ * Function check if new frame is needed
+ */
+function loop(){
 	requestAnimationFrame(function(){window.game.loop()});
 
 	this._now = Date.now();
@@ -179,7 +221,10 @@ TheGame.prototype.loop = function(){
 	}
 };
 
-TheGame.prototype.updateAndDrow = function(){
+/**
+ * Function update and drow game every single frame
+ */
+function updateAndDrow(){
 	this._ctx.clearRect(0, 0, this._width, this._height);
 
 	if(window.gameData.isGameRun){
@@ -199,7 +244,7 @@ TheGame.prototype.updateAndDrow = function(){
 			
 			window.gameData.props.push(newProp);
 			this._FramesFromLastProp = 0;
-		}else{
+		} else {
 			this._FramesFromLastProp = this._FramesFromLastProp + 1;
 		}
 
@@ -239,7 +284,10 @@ TheGame.prototype.updateAndDrow = function(){
 	this.updateStatus();
 };
 
-TheGame.prototype.updateStatus = function(){
+/**
+ * Function update game ui every single frame
+ */
+function updateStatus(){
 	var lives_label = document.querySelector(this._settings.ui.lives_label);
 	var scores_label = document.querySelector(this._settings.ui.scores_label);
 	var record_label = document.querySelector(this._settings.ui.record_label);
@@ -251,11 +299,18 @@ TheGame.prototype.updateStatus = function(){
 	document.querySelector(this._settings.ui.main_canvas).className = window.gameData.isPause ? "paused" : "run";
 };
 
-TheGame.prototype.message = function(msg){
+/**
+ * Function send message to user in main ui-label
+ * @param {String} msg - message
+ */
+function message(msg){
 	document.querySelector(this._settings ? this._settings.ui.status_label : defaultSettings.ui.status_label).textContent = msg;
 };
 
-TheGame.prototype.updateResults = function(){
+/**
+ * Function call scores update method, when button pressed
+ */
+function updateResults(){
 	window.gameData.scores.updateResults(this._userID, this._settings.ui.results_table);
 };
 

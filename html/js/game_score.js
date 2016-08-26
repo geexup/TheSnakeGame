@@ -1,8 +1,24 @@
-window.gameData.Scores = function(){
+(function(){
+
+/** Class representing a Scores in the game. */
+function Scores(){
 	this.scoreVal = 0;	
 };
 
-window.gameData.Scores.prototype.sendResults = function(result, table){
+Scores.prototype = {
+	sendResults:	sendResults,
+	updateResults:	updateResults,
+	addScores:		addScores,
+	removeScores:	removeScores,
+	getScores:		getScores
+};
+
+/**
+ * Function send current scores to server
+ * @param {array} result - an array that contain userID, name, nodeName, score count
+ * @param {String} result - a string that contain selector for table
+ */
+function sendResults(result, table){
 	var xhr = new XMLHttpRequest();
 	var scrs = this;
 
@@ -25,7 +41,12 @@ window.gameData.Scores.prototype.sendResults = function(result, table){
 	);
 };
 
-window.gameData.Scores.prototype.updateResults = function updateResults(userID, table){
+/**
+ * Function get top 10 players from server and displays users in table
+ * @param {String} userID - a strng that contain uniqe userID
+ * @param {String} result - a string that contain selector for table
+ */
+function updateResults(userID, table){
 	var xhr = new XMLHttpRequest();
 
 	xhr.onreadystatechange = function() {
@@ -45,16 +66,34 @@ window.gameData.Scores.prototype.updateResults = function updateResults(userID, 
   	xhr.send();
 };
 
-window.gameData.Scores.prototype.addScores = function(val){
+/**
+ * Function add amount of val scores to main score value
+ * @param {Number} val - amount of scores to add
+ * @return {Number} current scores
+ */
+function addScores(val){
 	this.scoreVal = this.scoreVal + val;
 	return this.scoreVal;
 };
 
-window.gameData.Scores.prototype.removeScores = function(val){
+/**
+ * Function remove amount of val scores to main score value
+ * @param {Number} val - amount of scores to remove
+ * @return {Number} current scores
+ */
+function removeScores(val){
 	this.scoreVal = this.scoreVal - val;
 	return this.scoreVal;
 };
 
-window.gameData.Scores.prototype.getScores = function(val){
+/**
+ * Function return current scores
+ * @return {Number} current scores
+ */
+function getScores(){
 	return this.scoreVal;
 };
+
+window.gameData.Scores = Scores;
+
+})();
