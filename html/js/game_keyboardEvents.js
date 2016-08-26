@@ -15,9 +15,10 @@ window.addEventListener("keydown", function(e){
 		case 67: window.game.initWithMode(2); break;
 		case 82: window.game.restartGame(); break;
 	}
+
 	switch(e.keyCode){
 		case 37: case 65: case 38: case 87: case 39: case 68: case 40: case 83: case 80: case 77: case 90: case 88: case 67: case 82:
 			e.preventDefault();
 		break;
-	};
+	}
 });

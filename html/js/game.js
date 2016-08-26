@@ -6,16 +6,25 @@ function randomString(length) {
 
 
 function TheGame(){
-	this._ctx = null;
-	this._width = 0, this._height = 0;
-	this._fps = 15, this._fpsInterval, this._startTime, this._now, this._then, this._elapsed;
-	this._FramesPerProp = 10, this._FramesFromLastProp = 0, this._maxPropsCount = 3;
-	this._settings = null;
-	this._lives = 3;
-	this._userID = localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", randomString(30)), localStorage.userID][1];
-	this._userName =  localStorage.userName ? localStorage.userName : "";
-	this._gameModeName = "Default";
-	this._settings = {};
+	this._ctx =					null;
+	this._width =				0;
+	this._height =				0;
+	this._fps =					15;
+	this._fpsInterval = 		0;
+	this._startTime =			0;
+	this._now =					0;
+	this._then =				0;
+	this._elapsed =				0;
+	this._FramesPerProp =		10;
+	this._FramesFromLastProp =	0;
+	this._maxPropsCount =		3;
+	this._settings =			null;
+	this._lives =				3;
+	this._gameModeName =		"Default";
+	this._settings =			{};
+
+	this._userID =				localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", randomString(30)), localStorage.userID][1];
+	this._userName =			localStorage.userName ? localStorage.userName : "";
 
 	if(TheGame.instance){
 		return TheGame.instance;
