@@ -1,6 +1,6 @@
 (function(){
 
-var _snakeBlocks, _direction, _directionToSet, _backAnchorPoint, _needsToAddBlockCount, _isAlive, _snakeColor;
+let _snakeBlocks, _direction, _directionToSet, _backAnchorPoint, _needsToAddBlockCount, _isAlive, _snakeColor;
 
 /** Class representing a Snake in game. */
 function Snake(settings, game){
@@ -112,7 +112,7 @@ function update(){
 		return;
 	}
 
-	var snake = this;
+	let snake = this;
 	window.gameData.props = window.gameData.props.filter(function(prop) {
 		if(prop.point.x == snake._anchorPoint.x && prop.point.y == snake._anchorPoint.y)
 		{
@@ -135,10 +135,10 @@ function update(){
 	_snakeBlocks[this._anchorPoint.x][this._anchorPoint.y].create(_direction);
 
 	if(_needsToAddBlockCount < 1){
-		var firstLoop = true;
+		let firstLoop = true;
 
 		do {
-			var backAnchorPoint_old = _snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y];
+			let backAnchorPoint_old = _snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y];
 
 			_snakeBlocks[_backAnchorPoint.x][_backAnchorPoint.y].delete();
 
@@ -172,8 +172,8 @@ function update(){
 function drow(ctx){
 	ctx.fillStyle = _isAlive ? _snakeColor.alive : _snakeColor.dead;
 
-	for (var x = 0; x < _snakeBlocks.length; x++) {
-		for (var y = 0; y < _snakeBlocks[x].length; y++){
+	for (let x = 0; x < _snakeBlocks.length; x++) {
+		for (let y = 0; y < _snakeBlocks[x].length; y++){
 			if(_snakeBlocks[x][y].enabled){
 				ctx.fillRect(x * window.gameData.pixelsize, y * window.gameData.pixelsize, window.gameData.pixelsize, window.gameData.pixelsize);
 			}

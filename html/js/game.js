@@ -1,9 +1,5 @@
 (function(){
 
-function randomString(length) {
-    return 
-}
-
 /** Class representing The Main Game. */
 function TheGame(){
 	this._ctx =					null;
@@ -258,10 +254,16 @@ function updateAndDrow(){
 	//Props Drow
 	var _ctx = this._ctx;
 
-	window.gameData.props.forEach(function(prop){
+	for(prop of window.gameData.props){
 		_ctx.fillStyle = prop.color;
 		_ctx.fillRect(prop.point.x * window.gameData.pixelsize, prop.point.y * window.gameData.pixelsize, window.gameData.pixelsize, window.gameData.pixelsize);
-	});
+	}
+
+	// window.gameData.props.forEach(function(prop){
+	// 	_ctx.fillStyle = prop.color;
+	// 	_ctx.fillRect(prop.point.x * window.gameData.pixelsize, prop.point.y * window.gameData.pixelsize, window.gameData.pixelsize, window.gameData.pixelsize);
+	// });
+	
 	//Snake Drow
 	window.gameData.snake.drow(this._ctx);
 	//Drow grid

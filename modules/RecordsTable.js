@@ -56,13 +56,24 @@ function saveRecords(callback){
 function loadRecords(callback){
 	var _resultsTable = this;
 
-	fs.readFile('./records.json', 'utf8', function (err,data) {
-  		if (!err) {
-  			_resultsTable.records = JSON.parse(data);
-  			_resultsTable.logger.log("Loaded", "Count:" + _resultsTable.records.length);
-  			callback(_resultsTable.records);
-  		}
-  	});
+	fs.stat('./records.json', function(err, stat) {
+	    if(err == null) {
+	        fs.readFile('./records.json', 'utf8', function (err,data) {
+		  		if (!err) {
+		  			_resultsTable.records = JSON.parse(data);
+		  			_resultsTable.logger.log("Loaded", "Count:" + _resultsTable.records.length);
+		  			callback(_resultsTable.records);
+		  		}
+		  	});
+	    } else if(err.code == 'ENOENT') {
+	       fs.writeFileSync('./records.json', '[]');
+	       _resultsTable.records = [];
+	       _resultsTable.logger.log("Created new records file");
+	       callback(_resultsTable.records);
+	    } else {
+	        _resultsTable.logger.error('Some error', err.code);
+	    }
+	});
 };
 
 module.exports = RecordsTable;

@@ -1,41 +1,47 @@
 (function(){
 
-/** Class representing a Bodypart of Snake. */
-function SnakeBlock(enabled, direction){
-	this.enabled =		enabled;
-	this.direction =	direction;
-};
 
-SnakeBlock.prototype = {
-	delete: deleteF,
-	create: create,
-	toString: toString
-};
+/** Class representing a Bodypart of Snake. **/
+class SnakeBlock{
+	constructor(enabled, direction){
+		this._enabled = enabled;
+		this._direction = direction;
+	}
 
-/**
- * Function delete block (makes it disabled)
- */
-function deleteF(){
-	this.enabled =		false;
-};
+	get enabled(){
+		return this._enabled;
+	}
 
-/**
- * Function create (enable) snake block
- * @param {string} direction - direction of snake continuum
- */
-function create(direction){
-	this.enabled =		true;
-	this.direction =	direction;
-};
+	get direction(){
+		return this._direction;
+	}
 
-/**
- * Function returns text representation of block
- * @return {string} text representation ("0"/"1")
- */
-function toString(){
-	return this.enabled ? "1" : "0";
-};
+	/**
+ 	 * Function delete block (makes it disabled)
+ 	 */
+	delete(){
+		this._enabled = false;
+	}
+
+	/**
+     * Function create (enable) snake block
+     * @param {string} direction - direction of snake continuum
+ 	 */
+	create(direction){
+		this._enabled = true;
+		this._direction = direction;
+	}
+
+	/**
+	 * Function returns text representation of block
+	 * @return {string} text representation ("0"/"1")
+	 */
+	toString(){
+		return this._enabled ? "1" : "0";
+	}
+}
 
 window.gameData.SnakeBlock = SnakeBlock;
+
 
 })();
