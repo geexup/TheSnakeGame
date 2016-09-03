@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>The Snake v1</title>
+	<!-- build:css css/game.min.css -->
+	<link rel="stylesheet" href="/css/style.css">
+	<!-- endbuild -->
+</head>
+<body>
+	<div class="container">
+		<div class="row gameStatus">
+			<div class="lives">0</div>
+			<div class="status"></div>
+			<div class="scores">0</div>
+		</div>
+		<div class="row">
+			<canvas id="THE_SNAKE" width="750px" height="750px">		
+			</canvas>
+			<h4>Личный рекорд - <span id="record">0</span></h4>
+		</div>
+		<div class="row">
+			<h2>Управление</h2>
+			<p><img src="/img/keyboard_awsd.png" height="80px"> - Движение Змейки</p>
+			<p ><img src="/img/keyboard_r.png" height="40px"> - Рестарт</p>
+			<p><img src="/img/keyboard_p.png" height="40px"> - Пауза</p>
+		</div>
+		<div class="row">
+			<h2>TOP 10</h2>
+			<input type="button" onClick="game.updateResults()" value="Update">
+			<table id="resultsTable">
+				<tr align="left" class="header">
+					<th>№</th>
+					<th>User Name</th>
+					<th>Game Mode</th>
+					<th>Scores</th>
+				</tr>
+				<tr align="left">
+					<th>1</th>
+					<th>Lex@VisiTech</th>
+					<th>HardCoreMode</th>
+					<th>2643</th>
+				</tr>
+			</table>
+		</div>
+	</div>
+ 	<!-- build:js js/main.min.js -->
+	<script src="/js/game.js"></script>
+	<script src="/js/game_score.js"></script>
+	<script src="/js/game_defaultConsts.js"></script>
+	<script src="/js/game_snake_block.js"></script>
+	<script src="/js/game_prop.js"></script>
+	<script src="/js/game_snake.js"></script>
+	<script src="/js/game_keyboardEvents.js"></script>
+	<script src="/js/main.js"></script>
+	<!-- endbuild -->
+</body>
+</html>

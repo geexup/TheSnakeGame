@@ -1,0 +1,107 @@
+#THE_SNAKE
+{
+	border: 1px solid black;
+	margin: 0 auto;
+	display: block;
+}
+
+body {
+    padding-top: 70px;
+    font-family: sans-serif;
+}
+
+body.HardCoreMode{
+	background-color: rgba(199, 74, 74, 0.66);
+}
+
+
+#resultsTable tr{
+	background-color: rgba(214, 61, 61, 0.63);
+}
+
+#resultsTable tr.me
+{
+	background-color: rgba(100, 214, 61, 0.63);
+}
+
+.row{
+	width: 752px;
+	margin: 0 auto;
+	display: block;
+}
+
+.gameStatus{
+	margin-bottom: 10px;
+	position: relative;
+}
+.gameStatus:after {
+   content: " "; /* Older browser do not support empty content */
+   visibility: hidden;
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+.gameStatus .status
+{
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	line-height: 34px;
+	text-transform: uppercase;
+}
+
+.gameStatus .lives, .gameStatus .scores{
+	font-size: 30px;
+}
+
+.gameStatus .lives::before{
+	display: block;
+    background-image: url(/img/live_symbol.svg);
+    width: 25px;
+    margin-right: 10px;
+    height: 34px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: left;
+	content: ""
+}
+.gameStatus .lives{
+	float: left;
+	color: red;
+}
+
+.gameStatus .scores::after{
+	display: block;
+    background-image: url(/img/scores_symbol.svg);
+    width: 25px;
+    margin-left: 10px;
+    height: 34px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: right;
+	content: ""
+}
+.gameStatus .scores{
+	float: right;
+	color: #F4C600;
+}
+
+#resultsTable{
+	width: 100%;
+    border-collapse: collapse;
+}
+#resultsTable th
+{
+	border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+#resultsTable .header
+{
+	color: #827f7f;
+	background-color: #f7f7f7;
+}
