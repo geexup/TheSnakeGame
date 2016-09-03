@@ -9,11 +9,8 @@ var gulp_autoprefixer	= require("gulp-autoprefixer");
 var gulp_concat			= require('gulp-concat');
 var gulp_babel			= require("gulp-babel");
 var gulp_uglify			= require('gulp-uglify');
-<<<<<<< HEAD
 var babelify 			= require('babelify');
 var browserify 			= require('browserify');
-=======
->>>>>>> f491af4694c085e00e342456861a63591ed0672e
 
 //HTML
 var gulp_useref			= require("gulp-useref");
@@ -23,11 +20,8 @@ var gulp_rename			= require("gulp-rename");
 var gulp_notify			= require("gulp-notify");
 var gulp_livereload		= require("gulp-livereload");
 var gulp_clean			= require("gulp-clean");
-<<<<<<< HEAD
 var buffer 				= require('vinyl-buffer');
 var source 				= require('vinyl-source-stream');
-=======
->>>>>>> f491af4694c085e00e342456861a63591ed0672e
 
 
 /**********************************************************
@@ -49,7 +43,6 @@ gulp.task('build_CSS', function() {
 
 //BUILD JS
 gulp.task('build_JS', function() {
-<<<<<<< HEAD
 	var bundler = browserify('./html/js/main.js');
     bundler.transform(babelify);
 
@@ -67,18 +60,6 @@ gulp.task('build_JS', function() {
         .pipe(gulp_rename("main.min.js"))
     	.pipe(gulp.dest("./build/html/js/"))
     	.pipe(gulp_notify("JS files was concated and minified!"));
-=======
-	gulp.src('./html/js/*.js')
-		.pipe(gulp_concat("game.js"))
-		.pipe(gulp_babel({
-			presets: ['es2015'],
-			minified: true,
-			comments: false
-		}))
-		.pipe(gulp_rename("game.min.js"))
-		.pipe(gulp.dest("./build/html/js/"))
-		.pipe(gulp_notify("JS files was concated and minified!"));
->>>>>>> f491af4694c085e00e342456861a63591ed0672e
 });
 
 //BUILD HTML
