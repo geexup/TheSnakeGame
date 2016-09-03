@@ -1,5 +1,6 @@
 (function(){
 
+<<<<<<< HEAD
 
 class TheGame{
 	constructor(){
@@ -103,6 +104,10 @@ function TheGame(){
 		return new TheGame();
 	}
 
+=======
+/** Class representing The Main Game. */
+function TheGame(){
+>>>>>>> f491af4694c085e00e342456861a63591ed0672e
 	this._ctx =					null;
 	this._width =				0;
 	this._height =				0;
@@ -122,9 +127,15 @@ function TheGame(){
 	this._userID =				localStorage.userID ? localStorage.userID : [localStorage.setItem("userID", Math.round(Math.pow(36, 30 + 1) - Math.random() * Math.pow(36, 30)).toString(36).slice(1)), localStorage.userID][1];
 	this._userName =			localStorage.userName ? localStorage.userName : "";
 
+<<<<<<< HEAD
 	//else{
 	// 	return new TheGame();
 	// }
+=======
+	if(TheGame.instance){
+		return TheGame.instance;
+	}
+>>>>>>> f491af4694c085e00e342456861a63591ed0672e
 
 	TheGame.instance = this;
 }
@@ -420,4 +431,8 @@ function updateResults(){
 	
 window.gameData = {};
 window.game = new TheGame();
+<<<<<<< HEAD
+=======
+
+>>>>>>> f491af4694c085e00e342456861a63591ed0672e
 })();
