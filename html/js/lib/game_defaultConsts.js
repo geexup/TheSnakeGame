@@ -1,3 +1,5 @@
+export default function setConsts(){
+
 window.gameData.defaultSettings = {
 		ui: {
 			scores_label:	".scores",
@@ -37,3 +39,5 @@ window.gameData.isGameRun =			false;
 window.gameData.isPause =			false;
 window.gameData.isGameOver =		false;
 window.gameData.isModeInitialised =	false;
+
+}

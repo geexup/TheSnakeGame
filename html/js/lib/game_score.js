@@ -1,8 +1,5 @@
-(function(){
-
-
 /** Class representing a Scores in the game. */
-class Scores{
+export default class Scores{
 	constructor(){
 		this._scoreVal = 0;
 	}
@@ -99,7 +96,4 @@ class Scores{
 
 
 
-window.gameData.Scores = Scores;
-
-
-})();
+//window.gameData.Scores = Scores;

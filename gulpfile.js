@@ -44,7 +44,11 @@ gulp.task('build_CSS', function() {
 //BUILD JS
 gulp.task('build_JS', function() {
 	var bundler = browserify('./html/js/main.js');
-    bundler.transform(babelify);
+    bundler.transform(babelify,  {
+    	presets: ["es2015"],
+    	minified: true,
+		comments: false
+    });
 
 
     bundler.bundle()
@@ -52,11 +56,11 @@ gulp.task('build_JS', function() {
         .pipe(source('main.js'))
         .pipe(buffer())
         //.pipe(uglify()) // Use any gulp plugins you want now
-        .pipe(gulp_babel({
-				presets: ['es2015'],
-				minified: true,
-				comments: false
-			}))
+   //      .pipe(gulp_babel({
+			// 	presets: ['es2015'],
+			// 	minified: true,
+			// 	comments: false
+			// }))
         .pipe(gulp_rename("main.min.js"))
     	.pipe(gulp.dest("./build/html/js/"))
     	.pipe(gulp_notify("JS files was concated and minified!"));

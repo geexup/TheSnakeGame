@@ -1,8 +1,9 @@
-(function(){
-
-
 /** Class representing The Main Game. */
-class TheGame{
+import Scores from "./game_score.js";
+import Snake from "./game_snake.js";
+import Prop from "./game_prop.js";
+
+export default class TheGame{
 	constructor(){
 		if(TheGame.instance){
 			return TheGame.instance;
@@ -52,7 +53,7 @@ class TheGame{
 		let canvas = document.querySelector(this._settings.ui.main_canvas);
 		this._ctx = canvas.getContext("2d");
 
-		window.gameData.scores = new window.gameData.Scores();
+		window.gameData.scores = new Scores();
 		window.gameData.scores.updateResults(this._userID, this._settings.ui.results_table);
 
 	  	this._fps = this._settings.game.fps;
@@ -66,7 +67,9 @@ class TheGame{
 		this._width = window.gameData.size * window.gameData.pixelsize;
 		this._height = window.gameData.size * window.gameData.pixelsize;
 
-		window.gameData.snake = new window.gameData.Snake(this._settings.snake, this);
+		window.gameData.props = [];
+		
+		window.gameData.snake = new Snake(this._settings.snake, this);
 
 		this.message("Select mode by key (Z, X, C)");
 	}
@@ -131,7 +134,7 @@ class TheGame{
 			localStorage.record = localStorage.record ? (localStorage.record <= window.gameData.scores.getScores() ? window.gameData.scores.getScores() : localStorage.record) : window.gameData.scores.getScores();
 			window.gameData.scores.sendResults([this._userName, this._userID, this._gameModeName, window.gameData.scores.getScores()],  this._settings.ui.results_table);
 		} else {
-			window.gameData.snake = new window.gameData.Snake(this._settings.snake, this);
+			window.gameData.snake = new Snake(this._settings.snake, this);
 		}
 	}
 
@@ -173,8 +176,8 @@ class TheGame{
 			return;
 		}
 
-		window.gameData.snake = new window.gameData.Snake(this._settings.snake, this);
-		window.gameData.scores = new window.gameData.Scores();
+		window.gameData.snake = new Snake(this._settings.snake, this);
+		window.gameData.scores = new Scores();
 
 		this._FramesFromLastProp = 0;
 		this._fps = this._settings.game.fps;
@@ -223,7 +226,7 @@ class TheGame{
 				while(window.gameData.snake.isBlockExist(newPropX,newPropY));
 				
 				let newPropType = Math.random() <= this._settings.props.chanceOfBomb ? (Math.random() >= 0.7 ? 3 : 1) : (Math.random() >= 0.5 ? 2 : 0);
-				let newProp = new window.gameData.Prop(newPropType, newPropX, newPropY, this._settings.props);
+				let newProp = new Prop(newPropType, newPropX, newPropY, this._settings.props);
 				
 				window.gameData.props.push(newProp);
 				this._FramesFromLastProp = 0;
@@ -305,7 +308,5 @@ class TheGame{
 
 }
 	
-window.gameData = {};
-window.game = new TheGame();
-
-})();
+// window.gameData = {};
+// window.game = new TheGame();

@@ -1,8 +1,5 @@
-(function(){
-
-
 /** Class representing a Bodypart of Snake. **/
-class SnakeBlock{
+export default class SnakeBlock{
 	constructor(enabled, direction){
 		this._enabled = enabled;
 		this._direction = direction;
@@ -41,7 +38,4 @@ class SnakeBlock{
 	}
 }
 
-window.gameData.SnakeBlock = SnakeBlock;
-
-
-})();
+//window.gameData.SnakeBlock = SnakeBlock;

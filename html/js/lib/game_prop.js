@@ -1,8 +1,5 @@
-(function(){
-
 /** Class representing a Block that Snake can eat in game. */
-
-class Prop{
+export default class Prop{
 	constructor(index, x, y, settings){
 		this.point =		{x : x, y: y};
 		this.score =		settings.scores[index];
@@ -13,6 +10,4 @@ class Prop{
 	}
 }
 
-window.gameData.Prop = Prop;
-
-})();
+//window.gameData.Prop = Prop;
