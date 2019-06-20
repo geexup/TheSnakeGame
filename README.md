@@ -1,6 +1,8 @@
 Игра Змейка
 ===========
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/geexup/TheSnakeGame.svg)](https://greenkeeper.io/)
+
 ## Классы 
 
 - класс игра
